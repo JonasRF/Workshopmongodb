@@ -24,9 +24,13 @@ import com.devsuperior.WorksShopmongo.services.exceptions.ResourceNotFoundExcept
 	}
 	
 	public UserDTO findById(String id){
-		Optional<User> result = repository.findById(id);
-		User entity = result.orElseThrow(() -> new ResourceNotFoundException("Id não encontrado"));
+		User entity = getEntityById(id);
 		return new UserDTO(entity);
+	}
+	
+	private User getEntityById(String id) {
+		Optional<User> result = repository.findById(id);
+	    return result.orElseThrow(() -> new ResourceNotFoundException("Id não encontrado"));
 	}
 	
 	public UserDTO insert(UserDTO dto) {
@@ -34,6 +38,13 @@ import com.devsuperior.WorksShopmongo.services.exceptions.ResourceNotFoundExcept
 		copyDtoToEntity(dto, entity);
 		entity = repository.insert(entity);
 		return new UserDTO(entity);
+	}
+	
+	public UserDTO update(String id, UserDTO dto) {
+		User entity = getEntityById(id);
+		copyDtoToEntity(dto, entity);
+		entity = repository.save(entity);
+		return new UserDTO(entity); 
 	}
 
 	private void copyDtoToEntity(UserDTO dto, User entity) {
